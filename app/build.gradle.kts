@@ -89,6 +89,10 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.47")
     implementation("androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03")
 
+
+    //Material Icons
+    implementation("androidx.compose.material:material-icons-extended")
+
 }
 
 kapt {
