@@ -1,14 +1,17 @@
 package com.rkbapps.jobgenie.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -25,6 +28,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.firebase.auth.FirebaseAuth
 import com.rkbapps.jobgenie.R
 import com.rkbapps.jobgenie.model.User
 import com.rkbapps.jobgenie.viewmodel.RegistrationViewModel
@@ -50,10 +54,16 @@ fun RegistrationScreen() {
         mutableStateOf("")
     }
 
+    val loading = remember {
+        mutableStateOf(false)
+    }
+
     val context = LocalContext.current
 
     val viewModel: RegistrationViewModel = hiltViewModel()
     val status = viewModel.status.collectAsState()
+    val registrationStatus = viewModel.registrationStatus.collectAsState()
+    val uid = viewModel.uid.collectAsState()
 
 
     Column(
@@ -151,22 +161,75 @@ fun RegistrationScreen() {
                 },
                 modifier = Modifier.fillMaxWidth()
             )
-
             Button(
                 onClick = {
-                    if (password.value == confirmPassword.value) {
-                        val user = User(
-                            firstName = firstName.value,
-                            uid = "12345",
-                            lastName = lastName.value,
-                            email = email.value,
-                            password = password.value
+                    loading.value = true
+                    if (checkForm(
+                            firstName.value,
+                            lastName.value,
+                            email.value,
+                            password.value,
+                            confirmPassword.value
                         )
-                        viewModel.addUser(user)
-
-                        if (status.value) {
-                            Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                    ) {
+//                        viewModel.registerUser(email.value, password.value)
+                        FirebaseAuth.getInstance().createUserWithEmailAndPassword(
+                            email.value,
+                            password.value
+                        ).addOnSuccessListener { authResult ->
+                            val firebaseId = authResult.user?.uid
+                            Log.d("RegistrationScreen", "firebaseId: $firebaseId")
+                            if (!firebaseId.isNullOrEmpty()) {
+                                viewModel.addUser(
+                                    User(
+                                        firstName = firstName.value,
+                                        lastName = lastName.value,
+                                        email = email.value,
+                                        uid = firebaseId,
+                                        password = password.value
+                                    )
+                                )
+                            } else {
+                                loading.value = false
+                                Toast.makeText(
+                                    context,
+                                    "Registration Failed:UID",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }.addOnFailureListener {
+                            loading.value = false
+                            Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT)
+                                .show()
                         }
+//                        if (registrationStatus.value!!.isSuccessful) {
+//                            val firebaseId = registrationStatus.value!!.result?.user?.uid
+//                            if (!firebaseId.isNullOrEmpty()) {
+//                                viewModel.addUser(
+//                                    User(
+//                                        firstName = firstName.value,
+//                                        lastName = lastName.value,
+//                                        email = email.value,
+//                                        uid = firebaseId,
+//                                        password = password.value
+//                                    )
+//                                )
+//                            } else {
+//                                loading.value = false
+//                                Toast.makeText(
+//                                    context,
+//                                    "Registration Failed:UID",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                            }
+//                        } else {
+//                            loading.value = false
+//                            Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT)
+//                                .show()
+//                        }
+                    } else {
+                        loading.value = false
+                        Toast.makeText(context, "Please fill properly", Toast.LENGTH_SHORT).show()
                     }
                 },
                 modifier = Modifier
@@ -175,9 +238,39 @@ fun RegistrationScreen() {
             ) {
                 Text(text = "Register")
             }
+            if (
+                loading.value
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(10.dp))
+            }
+            if (status.value) {
+                Text(
+                    text = "Registration Successful",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 10.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
     }
+}
 
-
+fun checkForm(
+    firstName: String,
+    lastName: String,
+    email: String,
+    password: String,
+    confirmPassword: String,
+): Boolean {
+    if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        return false
+    }
+    if (password != confirmPassword && password.length < 8) {
+        return false
+    }
+    return true
 }

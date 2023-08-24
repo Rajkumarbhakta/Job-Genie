@@ -1,6 +1,6 @@
 package com.rkbapps.jobgenie.module
 
-import com.rkbapps.jobgenie.api.JobApi
+import com.rkbapps.jobgenie.api.UserAPI
 import com.rkbapps.jobgenie.util.ApiConstants
 import dagger.Module
 import dagger.Provides
@@ -26,8 +26,8 @@ class NetworkModule {
 
     @Singleton
     @Provides
-    fun getJobAPi(retrofit: Retrofit): JobApi {
-        return retrofit.create(JobApi::class.java)
+    fun getJobAPi(retrofit: Retrofit): UserAPI {
+        return retrofit.create(UserAPI::class.java)
     }
 
 
