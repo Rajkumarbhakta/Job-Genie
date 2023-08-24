@@ -91,6 +91,10 @@ dependencies {
     //lottie
     implementation("com.airbnb.android:lottie-compose:4.1.0")
 
+
+    //Material Icons
+    implementation("androidx.compose.material:material-icons-extended")
+
 }
 
 kapt {
