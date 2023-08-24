@@ -14,14 +14,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.rkbapps.jobgenie.R
+import com.rkbapps.jobgenie.navigation.NavigationRoute
 
 @Composable
-fun WelcomeScreen() {
+fun WelcomeScreen(navController: NavHostController) {
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.wel))
 
     Box(
@@ -38,7 +41,11 @@ fun WelcomeScreen() {
                 modifier = Modifier.weight(1.0f)
             )
             Button(
-                onClick = { },
+                onClick = {
+
+                    navController.navigate(NavigationRoute.Register.route)
+
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp)
@@ -49,7 +56,9 @@ fun WelcomeScreen() {
 
             }
             Button(
-                onClick = {},
+                onClick = {
+                    navController.navigate(NavigationRoute.Login.route)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 20.dp, end = 20.dp, top = 16.dp)
@@ -59,15 +68,12 @@ fun WelcomeScreen() {
                 )
 
             }
-
-
         }
-
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun WelcomeScreenPreview() {
-    WelcomeScreen()
+    WelcomeScreen(rememberNavController())
 }

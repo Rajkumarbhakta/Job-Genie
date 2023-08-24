@@ -6,8 +6,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,20 +25,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.google.firebase.auth.FirebaseAuth
 import com.rkbapps.jobgenie.R
+import com.rkbapps.jobgenie.navigation.NavigationRoute
 import com.rkbapps.jobgenie.viewmodel.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavHostController) {
     val email = remember {
         mutableStateOf("")
     }
@@ -40,6 +52,9 @@ fun LoginScreen() {
         mutableStateOf("")
     }
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.login_animation))
+    val passwordVisibility = remember {
+        mutableStateOf(false)
+    }
 
     val viewModel: LoginViewModel = hiltViewModel()
     val status = viewModel.status.collectAsState()
@@ -85,29 +100,50 @@ fun LoginScreen() {
                 placeholder = {
                     Text(text = "Email")
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth()
             )
+
             OutlinedTextField(
-                value = password.value, onValueChange = { password.value = it },
+                value = password.value,
+                onValueChange = { password.value = it },
+                visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
                 label = {
                     Text(text = "Password")
                 },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 placeholder = {
                     Text(text = "Password")
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    if (password.value.isNotEmpty()) {
+                        IconButton(onClick = {
+                            passwordVisibility.value = !passwordVisibility.value
+                        }) {
+                            Icon(
+                                imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }
 
             )
             Button(
                 onClick = {
-                    if (email.value.isNotEmpty() && password.value.isNotEmpty()) {
-                        viewModel.loginUser(email.value, password.value)
-                        if (status.value) {
-                            Toast.makeText(context, "Login Successful", Toast.LENGTH_SHORT).show()
+                    FirebaseAuth.getInstance()
+                        .signInWithEmailAndPassword(email.value, password.value)
+                        .addOnCompleteListener {
+                            if (it.isSuccessful) {
+                                navController.navigate(NavigationRoute.MainScreen.route) {
+                                    popUpTo(0)
+                                }
+                            }
                         }
-                    }
-
-
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Login Failed", Toast.LENGTH_SHORT).show()
+                        }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -116,11 +152,7 @@ fun LoginScreen() {
                 Text(text = "LOGIN")
             }
         }
-
-
     }
-
-
 }
 
 

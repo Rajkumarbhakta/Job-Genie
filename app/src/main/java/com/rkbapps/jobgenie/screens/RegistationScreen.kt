@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -46,7 +47,7 @@ import com.rkbapps.jobgenie.viewmodel.RegistrationViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationScreen() {
+fun RegistrationScreen(navController: NavHostController) {
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.register))
     val firstName = remember {
         mutableStateOf("")
