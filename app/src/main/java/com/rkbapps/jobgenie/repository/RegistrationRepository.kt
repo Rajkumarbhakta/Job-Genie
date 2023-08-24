@@ -20,9 +20,7 @@ class RegistrationRepository @Inject constructor(private val api: UserAPI) {
     val registrationStatus: StateFlow<Task<AuthResult?>?>
         get() = _registrationStatus
 
-    val _uid = MutableStateFlow<String>("")
-    val uid: StateFlow<String>
-        get() = _uid
+
 
 
     suspend fun addUserInDB(
@@ -31,20 +29,10 @@ class RegistrationRepository @Inject constructor(private val api: UserAPI) {
         val response = api.registerUser(user)
         if (response.isSuccessful) {
             _status.emit(true)
-            Log.d("RegistrationRepository", "addUser: ${response.body()}")
+            //Log.d("RegistrationRepository", "addUser: ${response.body()}")
         } else {
             _status.emit(false)
-            Log.d("RegistrationRepository", "addUser: ${response.code()} ${response.body()}")
-        }
-    }
-
-    suspend fun registerUser(email: String, password: String) {
-        val task = FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-        if (task.isSuccessful) {
-            _registrationStatus.emit(task)
-            _uid.emit(task.result?.user?.uid.toString())
-        } else {
-            _registrationStatus.emit(null)
+            //Log.d("RegistrationRepository", "addUser: ${response.code()} ${response.body()}")
         }
     }
 }

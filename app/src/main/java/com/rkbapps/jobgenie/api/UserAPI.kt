@@ -13,7 +13,7 @@ interface UserAPI {
     @POST("users/add")
     suspend fun registerUser(@Body user: User): Response<AddUser>
 
-    @POST("/api/v1/users/login")
+    @POST("users/login")
     suspend fun loginUser(@Query("email") email:String,@Query("password")password:String): Response<AddUser>
 
 }

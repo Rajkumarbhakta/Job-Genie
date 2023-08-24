@@ -9,10 +9,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -20,6 +26,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,12 +68,13 @@ fun RegistrationScreen() {
         mutableStateOf(false)
     }
 
-    val context = LocalContext.current
+    val confirmPasswordVisibility = remember { mutableStateOf(false) }
+    val passwordVisibility = remember { mutableStateOf(false) }
 
+    val context = LocalContext.current
     val viewModel: RegistrationViewModel = hiltViewModel()
     val status = viewModel.status.collectAsState()
-    val registrationStatus = viewModel.registrationStatus.collectAsState()
-    val uid = viewModel.uid.collectAsState()
+
 
 
     Column(
@@ -106,9 +117,12 @@ fun RegistrationScreen() {
                 }, label = {
                     Text(text = "First Name")
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Go,
+                    keyboardType = KeyboardType.Text
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
-
             OutlinedTextField(
                 value = lastName.value,
                 onValueChange = {
@@ -119,6 +133,10 @@ fun RegistrationScreen() {
                 }, label = {
                     Text(text = "Last Name")
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Go,
+                    keyboardType = KeyboardType.Text
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -133,20 +151,39 @@ fun RegistrationScreen() {
                 label = {
                     Text(text = "Email")
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Go,
+                    keyboardType = KeyboardType.Email
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
-
             OutlinedTextField(
                 value = password.value,
                 onValueChange = {
                     password.value = it
                 },
+                visualTransformation = if (passwordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
                 placeholder = {
                     Text(text = "Password")
                 }, label = {
                     Text(text = "Password")
                 },
-                modifier = Modifier.fillMaxWidth()
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Go,
+                    keyboardType = KeyboardType.Password
+                ),
+                modifier = Modifier.fillMaxWidth(), trailingIcon = {
+                    if (password.value.isNotEmpty()) {
+                        IconButton(onClick = {
+                            passwordVisibility.value = !passwordVisibility.value
+                        }) {
+                            Icon(
+                                imageVector = if (passwordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }
             )
 
             OutlinedTextField(
@@ -154,13 +191,30 @@ fun RegistrationScreen() {
                 onValueChange = {
                     confirmPassword.value = it
                 },
+                visualTransformation = if (confirmPasswordVisibility.value) VisualTransformation.None else PasswordVisualTransformation(),
                 placeholder = {
                     Text(text = "Confirm Password")
                 }, label = {
                     Text(text = "Confirm Password")
                 },
-                modifier = Modifier.fillMaxWidth()
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Password
+                ),
+                modifier = Modifier.fillMaxWidth(), trailingIcon = {
+                    if (confirmPassword.value.isNotEmpty()) {
+                        IconButton(onClick = {
+                            confirmPasswordVisibility.value = !confirmPasswordVisibility.value
+                        }) {
+                            Icon(
+                                imageVector = if (confirmPasswordVisibility.value) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }
             )
+
             Button(
                 onClick = {
                     loading.value = true
@@ -193,7 +247,7 @@ fun RegistrationScreen() {
                                 loading.value = false
                                 Toast.makeText(
                                     context,
-                                    "Registration Failed:UID",
+                                    "Registration Failed",
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -202,31 +256,6 @@ fun RegistrationScreen() {
                             Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT)
                                 .show()
                         }
-//                        if (registrationStatus.value!!.isSuccessful) {
-//                            val firebaseId = registrationStatus.value!!.result?.user?.uid
-//                            if (!firebaseId.isNullOrEmpty()) {
-//                                viewModel.addUser(
-//                                    User(
-//                                        firstName = firstName.value,
-//                                        lastName = lastName.value,
-//                                        email = email.value,
-//                                        uid = firebaseId,
-//                                        password = password.value
-//                                    )
-//                                )
-//                            } else {
-//                                loading.value = false
-//                                Toast.makeText(
-//                                    context,
-//                                    "Registration Failed:UID",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//                            }
-//                        } else {
-//                            loading.value = false
-//                            Toast.makeText(context, "Registration Failed", Toast.LENGTH_SHORT)
-//                                .show()
-//                        }
                     } else {
                         loading.value = false
                         Toast.makeText(context, "Please fill properly", Toast.LENGTH_SHORT).show()
