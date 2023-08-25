@@ -29,4 +29,7 @@ fun EntryNavGraph(navController: NavHostController) {
             HomeScreen()
         }
     }
+
+
+
 }
