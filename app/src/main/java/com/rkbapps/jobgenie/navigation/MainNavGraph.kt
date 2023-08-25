@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.rkbapps.jobgenie.screens.HomeScreen
+import com.rkbapps.jobgenie.screens.ProfileScreen
 import com.rkbapps.jobgenie.screens.SearchScreen
 
 @Composable
@@ -20,6 +21,7 @@ fun MainNavGraph(
     navController: NavHostController,
     applicationTitle: MutableState<String>,
     innerPadding: PaddingValues,
+    showLogOut: MutableState<Boolean>,
 ) {
 
     NavHost(
@@ -29,11 +31,13 @@ fun MainNavGraph(
 
         composable(route = BottomNavigationItem.Home.route) {
             applicationTitle.value = "Job Genie"
+            showLogOut.value = false
             HomeScreen()
         }
 
         composable(route = BottomNavigationItem.Job.route) {
             applicationTitle.value = "Applications"
+            showLogOut.value = false
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(text = "Job Page")
             }
@@ -41,14 +45,12 @@ fun MainNavGraph(
 
         composable(route = BottomNavigationItem.Profile.route) {
             applicationTitle.value = "Profile"
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Profile Page")
-            }
+            showLogOut.value = true
+            ProfileScreen(navController = navController)
         }
         composable(route = NavigationRoute.SearchScreen.route) {
             SearchScreen()
         }
-
     }
 
 

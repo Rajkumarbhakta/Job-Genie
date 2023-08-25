@@ -3,17 +3,22 @@ package com.rkbapps.jobgenie.screens
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,6 +55,9 @@ fun LoginScreen(navController: NavHostController) {
     }
     val password = remember {
         mutableStateOf("")
+    }
+    val isLogIn = remember {
+        mutableStateOf(false)
     }
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.login_animation))
     val passwordVisibility = remember {
@@ -132,14 +140,17 @@ fun LoginScreen(navController: NavHostController) {
             )
             Button(
                 onClick = {
-                    if(email.value.isEmpty() || password.value.isEmpty()){
-                        Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+                    isLogIn.value = true
+                    if (email.value.isEmpty() || password.value.isEmpty()) {
+                        Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT)
+                            .show()
                         return@Button
                     }
                     FirebaseAuth.getInstance()
                         .signInWithEmailAndPassword(email.value, password.value)
                         .addOnCompleteListener {
                             if (it.isSuccessful) {
+                                isLogIn.value = false
                                 navController.navigate(NavigationRoute.MainScreen.route) {
                                     popUpTo(0)
                                 }
@@ -153,7 +164,21 @@ fun LoginScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(vertical = 10.dp, horizontal = 16.dp)
             ) {
-                Text(text = "LOGIN")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Login")
+                    if (isLogIn.value) {
+                        Spacer(modifier = Modifier.size(10.dp))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(15.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp,
+                        )
+                    }
+                }
             }
         }
     }

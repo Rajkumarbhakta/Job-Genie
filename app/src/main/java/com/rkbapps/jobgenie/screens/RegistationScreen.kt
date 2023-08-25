@@ -4,6 +4,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -42,6 +45,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.google.firebase.auth.FirebaseAuth
 import com.rkbapps.jobgenie.R
 import com.rkbapps.jobgenie.model.User
+import com.rkbapps.jobgenie.navigation.NavigationRoute
 import com.rkbapps.jobgenie.viewmodel.RegistrationViewModel
 
 
@@ -222,26 +226,23 @@ fun RegistrationScreen(navController: NavHostController) {
                     if (checkForm(
                             firstName.value,
                             lastName.value,
-                            email.value,
-                            password.value,
-                            confirmPassword.value
-                        )
+                            email.value
+                        ) && checkPassword(password.value, confirmPassword.value)
                     ) {
-//                        viewModel.registerUser(email.value, password.value)
                         FirebaseAuth.getInstance().createUserWithEmailAndPassword(
-                            email.value,
-                            password.value
+                            email.value.trim(),
+                            confirmPassword.value.trim()
                         ).addOnSuccessListener { authResult ->
                             val firebaseId = authResult.user?.uid
                             Log.d("RegistrationScreen", "firebaseId: $firebaseId")
                             if (!firebaseId.isNullOrEmpty()) {
                                 viewModel.addUser(
                                     User(
-                                        firstName = firstName.value,
-                                        lastName = lastName.value,
-                                        email = email.value,
+                                        firstName = firstName.value.trim(),
+                                        lastName = lastName.value.trim(),
+                                        email = email.value.trim(),
                                         uid = firebaseId,
-                                        password = password.value
+                                        password = confirmPassword.value.trim()
                                     )
                                 )
                             } else {
@@ -266,40 +267,49 @@ fun RegistrationScreen(navController: NavHostController) {
                     .fillMaxWidth()
                     .padding(vertical = 10.dp, horizontal = 16.dp)
             ) {
-                Text(text = "Register")
-            }
-            if (
-                loading.value
-            ) {
-                CircularProgressIndicator(modifier = Modifier.size(10.dp))
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = "Register")
+                    if (loading.value) {
+                        Spacer(modifier = Modifier.size(10.dp))
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(15.dp),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            strokeWidth = 2.dp,
+                        )
+                    }
+                }
             }
             if (status.value) {
-                Text(
-                    text = "Registration Successful",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 10.dp),
-                    textAlign = TextAlign.Center
-                )
+                loading.value = false
+                navController.navigate(route = NavigationRoute.MainScreen.route) {
+                    popUpTo(0)
+                }
             }
         }
 
     }
 }
 
+
 fun checkForm(
     firstName: String,
     lastName: String,
     email: String,
-    password: String,
-    confirmPassword: String,
 ): Boolean {
-    if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+    if (firstName.trim().isEmpty() || lastName.trim().isEmpty() || email.trim()
+            .isEmpty()
+    ) {
         return false
     }
-    if (password != confirmPassword && password.length < 8) {
+    return true
+}
+
+fun checkPassword(password: String, confirmPassword: String): Boolean {
+    if (password.trim() != confirmPassword.trim() && confirmPassword.trim().length < 8) {
         return false
     }
     return true

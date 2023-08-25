@@ -1,7 +1,7 @@
 package com.rkbapps.jobgenie.model
 
 data class User(
-    val id: Long? = null,
+    var id: Long? = null,
     val uid: String,
     val firstName: String,
     val lastName: String,

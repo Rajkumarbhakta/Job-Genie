@@ -26,7 +26,7 @@ fun EntryNavGraph(navController: NavHostController) {
             RegistrationScreen(navController = navController)
         }
         composable(route = NavigationRoute.MainScreen.route) {
-            MainScreen()
+            MainScreen(mainNavController = navController)
         }
     }
 

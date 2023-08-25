@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -24,8 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.FirebaseAuth
 import com.rkbapps.jobgenie.model.Education
 
 
@@ -51,18 +49,12 @@ fun ProfileScreen(navController: NavHostController) {
                 )
             )
         )
-
-        Button(onClick = {
-            Firebase.auth.signOut()
-        }) {
-            Text(text = "Logout")
-        }
-
     }
 }
 
 @Composable
 fun ProfileTopBar(firstName: String, lastName: String, email: String) {
+    val user = FirebaseAuth.getInstance().currentUser
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -83,7 +75,7 @@ fun ProfileTopBar(firstName: String, lastName: String, email: String) {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                 )
-                Text(text = email, fontSize = 15.sp, fontWeight = FontWeight.Normal)
+                Text(text = user!!.email!!, fontSize = 15.sp, fontWeight = FontWeight.Normal)
             }
             Box(
                 modifier = Modifier
@@ -127,20 +119,6 @@ fun EducationQualificationItem(educationList: List<Education>) {
 
 @Composable
 fun EducationItem(education: Education) {
-//    Card(
-//        modifier = Modifier
-//            .fillMaxWidth(),
-//        colors = CardDefaults.cardColors(containerColor = Color.White),
-//        shape = RoundedCornerShape(10.dp),
-//        elevation = CardDefaults.cardElevation(2.dp)
-//    ) {
-//        Column(modifier = Modifier.padding(10.dp)) {
-//            Text(text = education.degree, style = MaterialTheme.typography.titleSmall)
-//            Text(text = education.school, style = MaterialTheme.typography.bodyMedium)
-//            Text(text = education.startYear, style = MaterialTheme.typography.bodyMedium)
-//        }
-//    }
-
     Column(
         modifier = Modifier
             .fillMaxWidth()
