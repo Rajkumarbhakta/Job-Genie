@@ -8,4 +8,5 @@ sealed class NavigationRoute(
     object Login : NavigationRoute("login")
     object Register : NavigationRoute("register")
     object MainScreen : NavigationRoute("main_screen")
+    object SearchScreen : NavigationRoute("search_screen")
 }
