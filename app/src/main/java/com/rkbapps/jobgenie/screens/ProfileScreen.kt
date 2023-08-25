@@ -17,11 +17,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,79 +31,47 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseAuth
 import com.rkbapps.jobgenie.model.Education
 import com.rkbapps.jobgenie.model.Experience
 import com.rkbapps.jobgenie.model.Skill
+import com.rkbapps.jobgenie.viewmodel.ProfileScreenViewModel
 
 
 @Composable
 fun ProfileScreen(navController: NavHostController) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-    ) {
-        ProfileTopBar(firstName = "Rahul", lastName = "Kumar", email = "rajkumar@gmail.com")
-        EducationQualificationItem(
-            educationList = listOf(
-                Education(
-                    degree = "B.Tech",
-                    school = "NIT Patna",
-                    startYear = "2016",
-                    endYear = "2020",
-                    id = 1
-                ),
-                Education(
-                    degree = "M.Tech",
-                    school = "IIT Bombay",
-                    startYear = "2018",
-                    endYear = "2020",
-                    id = 2
-                )
+    val viewModel: ProfileScreenViewModel = hiltViewModel()
+    val userALLData = viewModel.userData.collectAsState()
+
+    if (userALLData.value != null) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+        ) {
+            ProfileTopBar(
+                firstName = userALLData.value!!.user.firstName,
+                lastName = userALLData.value!!.user.lastName,
+                email = userALLData.value!!.user.email
             )
-        )
-        UserSkill(
-            skillList = listOf(
-                Skill(id = 1, name = "Java"),
-                Skill(id = 2, name = "Kotlin"),
-                Skill(id = 3, name = "Python"),
-                Skill(id = 4, name = "C++"),
-                Skill(id = 5, name = "C"),
-                Skill(id = 6, name = "Javascript"),
-                Skill(id = 7, name = "React"),
-                Skill(id = 8, name = "Angular"),
+            EducationQualificationItem(
+                educationList = userALLData.value!!.educations
             )
-        )
+            UserSkill(
+                skillList = userALLData.value!!.skills
+            )
 
-        UserExperience(
-            experienceList = listOf(
-                Experience(
-                    id = 1,
-                    company = "Google",
-                    startDate = "2018",
-                    endDate = "2020",
-                    title = "Software Engineer",
-                ),
-                Experience(
-                    id = 2,
-                    company = "Facebook",
-                    startDate = "2018",
-                    endDate = "2020",
-                    title = "Software Engineer",
-                ),
-                Experience(
-                    id = 3,
-                    company = "Amazon",
-                    startDate = "2018",
-                    endDate = "2020",
-                    title = "Software Engineer",
-                ),
+            UserExperience(
+                experienceList = userALLData.value!!.experiences
+            )
+        }
 
-                )
-        )
-
+    } else {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
     }
 }
 
@@ -293,9 +263,9 @@ fun UserExperience(experienceList: List<Experience>) {
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
         } else {
-                experienceList.forEach {
-                    ExperienceItem(experience = it)
-                }
+            experienceList.forEach {
+                ExperienceItem(experience = it)
+            }
         }
     }
 }

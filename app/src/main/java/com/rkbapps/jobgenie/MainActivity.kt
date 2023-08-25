@@ -9,9 +9,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.rkbapps.jobgenie.navigation.EntryNavGraph
-import com.rkbapps.jobgenie.screens.HomeScreen
-import com.rkbapps.jobgenie.screens.JobItem
-import com.rkbapps.jobgenie.screens.MainScreen
 import com.rkbapps.jobgenie.ui.theme.JobGenieTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -26,8 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                   // EntryNavGraph(navController = rememberNavController())
-                    JobItem()
+                    EntryNavGraph(navController = rememberNavController())
                 }
             }
         }

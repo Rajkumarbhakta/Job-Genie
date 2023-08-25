@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -22,9 +23,8 @@ interface UserAPI {
     ): Response<AddUser>
 
     @GET("users/uid/{uid}")
-    suspend fun getUser(@Query("uid") uid: String): Response<User>
+    suspend fun getUser(@Path("uid") uid: String): Response<User>
 
-    @GET("users/data/{id]")
-    suspend fun getUserData(@Query("id") id: Long): Response<UserALLData>
-
+    @GET("users/data/{id}")
+    suspend fun getUserData(@Path("id") id: Int): Response<UserALLData>
 }

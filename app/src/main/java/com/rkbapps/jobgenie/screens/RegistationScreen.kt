@@ -238,6 +238,7 @@ fun RegistrationScreen(navController: NavHostController) {
                             if (!firebaseId.isNullOrEmpty()) {
                                 viewModel.addUser(
                                     User(
+                                        id = null,
                                         firstName = firstName.value.trim(),
                                         lastName = lastName.value.trim(),
                                         email = email.value.trim(),

@@ -10,15 +10,21 @@ import javax.inject.Inject
 
 class ProfileScreenRepository @Inject constructor(private val userApi: UserAPI) {
 
+    private val auth = FirebaseAuth.getInstance()
+    private val uid = auth.currentUser!!.uid
+
     val _userData = MutableStateFlow<UserALLData?>(null)
 
     val userData: StateFlow<UserALLData?>
         get() = _userData
 
     private suspend fun getUserData(): User {
-        val response = userApi.getUser(FirebaseAuth.getInstance().currentUser!!.uid)
+//        Log.d("ProfileScreenRepository", "getUserData: $uid")
+        val response = userApi.getUser(uid)
+//        Log.d("ProfileScreenRepository", "getUserData: ${response.code()} ${response.body()}")
         return response.body()!!
     }
+
     suspend fun getUserDetails() {
         val response = userApi.getUserData(getUserData().id!!)
         if (response.isSuccessful) {
