@@ -31,7 +31,7 @@ fun MainNavGraph(
         composable(route = BottomNavigationItem.Home.route) {
             applicationTitle.value = "Job Genie"
             showLogOut.value = false
-            HomeScreen()
+            HomeScreen(navController = navController)
         }
 
         composable(route = BottomNavigationItem.Job.route) {
