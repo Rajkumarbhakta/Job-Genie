@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.rkbapps.jobgenie.screens.HomeScreen
 import com.rkbapps.jobgenie.screens.SearchScreen
 
 @Composable
@@ -28,9 +29,7 @@ fun MainNavGraph(
 
         composable(route = BottomNavigationItem.Home.route) {
             applicationTitle.value = "Job Genie"
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(text = "Home Page")
-            }
+            HomeScreen()
         }
 
         composable(route = BottomNavigationItem.Job.route) {

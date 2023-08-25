@@ -31,7 +31,7 @@ import com.rkbapps.jobgenie.navigation.MainNavGraph
 import com.rkbapps.jobgenie.navigation.NavigationRoute
 
 @Composable
-fun HomeScreen() {
+fun MainScreen() {
     val currentUser = FirebaseAuth.getInstance().currentUser
     val navController = rememberNavController()
     val appBarTittle = remember { mutableStateOf("Job Genie") }

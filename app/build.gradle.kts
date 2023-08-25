@@ -73,6 +73,7 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx:24.7.0")
     implementation("com.google.firebase:firebase-storage-ktx:20.2.1")
     implementation("com.google.firebase:firebase-auth-ktx")
+
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
@@ -98,6 +99,8 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:6.1.0")
     //Material Icons
     implementation("androidx.compose.material:material-icons-extended")
+
+
 
 }
 

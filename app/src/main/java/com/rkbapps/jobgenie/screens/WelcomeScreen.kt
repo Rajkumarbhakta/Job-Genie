@@ -25,7 +25,7 @@ import com.rkbapps.jobgenie.navigation.NavigationRoute
 
 @Composable
 fun WelcomeScreen(navController: NavHostController) {
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.wel))
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.animation_llpbh5uc))
 
     Box(
         Modifier.fillMaxSize(), contentAlignment = Alignment.Center
