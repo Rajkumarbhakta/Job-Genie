@@ -132,6 +132,10 @@ fun LoginScreen(navController: NavHostController) {
             )
             Button(
                 onClick = {
+                    if(email.value.isEmpty() || password.value.isEmpty()){
+                        Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
                     FirebaseAuth.getInstance()
                         .signInWithEmailAndPassword(email.value, password.value)
                         .addOnCompleteListener {

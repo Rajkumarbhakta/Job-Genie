@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.rkbapps.jobgenie.screens.MainScreen
 import com.rkbapps.jobgenie.screens.LoginScreen
+import com.rkbapps.jobgenie.screens.MainScreen
 import com.rkbapps.jobgenie.screens.RegistrationScreen
 import com.rkbapps.jobgenie.screens.SplashScreen
 import com.rkbapps.jobgenie.screens.WelcomeScreen
@@ -25,11 +25,10 @@ fun EntryNavGraph(navController: NavHostController) {
         composable(route = NavigationRoute.Register.route) {
             RegistrationScreen(navController = navController)
         }
-        composable(route = NavigationRoute.MainScreen.route){
+        composable(route = NavigationRoute.MainScreen.route) {
             MainScreen()
         }
     }
-
 
 
 }
