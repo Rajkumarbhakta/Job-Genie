@@ -23,7 +23,6 @@ fun MainNavGraph(
     innerPadding: PaddingValues,
     showLogOut: MutableState<Boolean>,
 ) {
-
     NavHost(
         navController = navController, startDestination = BottomNavigationItem.Home.route,
         modifier = Modifier.padding(paddingValues = innerPadding)
