@@ -16,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -26,6 +27,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -137,7 +140,7 @@ fun EducationQualificationItem(educationList: List<Education>) {
              mutableStateOf(false)
 
          }
-        val degree = remember {
+        var degree = remember {
             mutableStateOf("")
         }
         val college = remember {
@@ -167,7 +170,32 @@ fun EducationQualificationItem(educationList: List<Education>) {
                             Text(text = "Add Education")
                     },
                     text= {
-                        Text(text = "adsds ghhhjh jkjkjkkjjj")
+                        Column {
+
+
+                            OutlinedTextField(
+                                value = degree.value, onValueChange = { degree.value = it },
+                                label = {
+                                    Text(text = "Degree")
+                                },
+                                placeholder = {
+                                    Text(text = "Degree")
+                                },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                            OutlinedTextField(
+                                value = college.value, onValueChange = { college.value = it },
+                                label = {
+                                    Text(text = "College")
+                                },
+                                placeholder = {
+                                    Text(text = "College")
+                                },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     },
 
                     confirmButton = {
